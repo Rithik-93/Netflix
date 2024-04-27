@@ -1,15 +1,14 @@
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prismadb from '@/lib/prismadb'
-import { NextResponse } from 'next/server';
+import prismadb from '@/lib/prismadb';
 
-export async function POST(req : Request ) {
+export default async function POST(req : NextApiRequest, res : NextApiResponse ) {
     if (req.method !== 'POST') {
-        return NextResponse.json({ status: 403 });
+        return res.status(405).end();
     }
 
     try {
-        const {email, name, password} = await req.json();
+        const {email, name, password} = await req.body;
         const existingUser = await prismadb.user.findUnique({
             where : {
                 email : email
@@ -17,7 +16,9 @@ export async function POST(req : Request ) {
         });
 
         if (existingUser) {
-            return NextResponse.json({ message: "Email already taken" }, { status: 422 });
+            return res.status(403).json({
+                message : "email already taken"
+            })
         }
         
         const hashedPassword = await bcrypt.hash(password, 12);
@@ -32,11 +33,11 @@ export async function POST(req : Request ) {
             }
         });
 
-        return NextResponse.json({ message: user }, { status: 200 });
+        return res.status(200).json(user)
 
     } catch(error) {
         console.log(error)
-        
-        return NextResponse.json({ message: "error" }, { status: 400 });
+    
+        return res.status(400).json(error);
     }
-}
+};
