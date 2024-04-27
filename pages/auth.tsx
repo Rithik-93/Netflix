@@ -2,17 +2,22 @@
 import { ChangeEvent, useCallback, useState } from "react";
 import Input from "../components/inputs";
 import Axios from "axios";
+import { signIn } from "next-auth/react";
+import { Router, useRouter } from "next/router";
 
 const Auth = () => {
+  const router = useRouter
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-
   const [varient, setVarient] = useState('login');
 
   const toggleVarient = useCallback(() => {
     setVarient((currentVarient)=> currentVarient==='login' ? 'register' : 'login')
   },[])
+  
+  
+
 
   const register = useCallback (async () => {
     try {
@@ -40,16 +45,16 @@ const Auth = () => {
           <div className="flex flex-col gap-4">
            {varient === "register" ? 
            <Input
-            value={email} 
-            label="Email"
-            id="email"
-            onChange={(e : ChangeEvent<HTMLInputElement>)=>{setEmail(e.target.value)}}
+            value={name} 
+            label="Username"
+            id="name"
+            onChange={(e : ChangeEvent<HTMLInputElement>)=>{setName(e.target.value)}}
             /> : null}
            <Input
-             value={name} 
-             label="Name"
-             id="Name"
-             onChange={(e : ChangeEvent<HTMLInputElement>)=>{setName(e.target.value)}}
+             value={email} 
+             label="Email"
+             id="Email"
+             onChange={(e : ChangeEvent<HTMLInputElement>)=>{setEmail(e.target.value)}}
            />
            <Input
              value={password} 
